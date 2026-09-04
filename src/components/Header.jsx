@@ -2,642 +2,721 @@
 
 
 
-// "use client";
+// 'use client';
 
-// import { useState, useEffect } from "react";
-// import styled from "styled-components";
-// import Link from "next/link";
-// import { usePathname } from "next/navigation";
-// import { auth, db } from "../firebaseConfig";
-// import { onAuthStateChanged } from "firebase/auth";
-// import { doc, onSnapshot } from "firebase/firestore";
-// import PaymentInProgressModal from "./PaymentInProgressModal";
-// import { useAppContext } from "./Context";
-// import { useCart } from "@/components/CartContext";
+// import React, { useState, useEffect, useRef } from 'react';
+// import styled from 'styled-components';
+// import Image from 'next/image';
+// import useRouter from 'next/navigation';
 
-// /* ================= COLORS ================= */
-// const PrimaryColor = "#ec4899"; // Vibrant Pink from the logo
-// const AccentGradient = "linear-gradient(135deg, #ec4899 0%, #f59e0b 50%, #06b6d4 100%)"; // Pink -> Orange -> Turquoise
-// const Dark = "#1e293b";
-// const Border = "#e2e8f0";
-// const White = "#ffffff";
-// const Turquoise = "#06b6d4";
+// const Header = () => {
+//   const [isOpen, setIsOpen] = useState(false);
+//   const menuRef = useRef(null);
+//   const router = useRouter();
 
-// /* ================= HEADER ================= */
-// const HeaderContainer = styled.header`
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   z-index: 300;
+//   const menuItems = [
+//     { name: 'Home', href: '/' },
+//     { name: 'Story', href: '#story' },
+//     { name: 'Impact', href: '#impact' },
+//     { name: 'Events', href: '#events' },
+//     { name: 'Team', href: '#team' },
+//     { name: 'Donate', href: '#donate' },
+//     { name: 'Gallery', href: '#gallery' },
+//     { name: 'Reviews', href: '#reviews' },
+//     { name: 'Forms', href: '#forms' },
+//     { name: 'School Fees', href: '#school-fees' },
+//     { name: 'Contact', href: '#contact' },
+//     { name: "Elizabeth's Story", href: '#elizabeths-story' },
+//     { name: 'Blue Bird Memorial', href: '/blue-bird-memorial' },
+//   ];
 
-//   background: rgba(255, 255, 255, 0.9);
-//   backdrop-filter: blur(14px);
-//   -webkit-backdrop-filter: blur(14px);
-
-//   border-bottom: 1px solid ${Border};
-//   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-// `;
-
-// const Inner = styled.div`
-//   max-width: 1200px;
-//   margin: auto;
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   padding: 0.3rem 1.5rem;
-// `;
-
-// /* ================= LOGO ================= */
-// const Logo = styled.div`
-//   font-size: 1.25rem;
-//   font-weight: 800;
-//   color: ${Dark};
-//   cursor: pointer;
-//   display: flex;
-//   align-items: center;
-//   gap: 4px;
-
-//   span {
-//     background: ${AccentGradient};
-//     -webkit-background-clip: text;
-//     -webkit-text-fill-color: transparent;
-//   }
-// `;
-
-// /* ================= NAV ================= */
-// const Nav = styled.nav`
-//   display: flex;
-//   align-items: center;
-//   gap: 2rem;
-
-//   @media (max-width: 768px) {
-//     position: fixed;
-//     top: 73px;
-//     right: 0;
-//     width: 80%;
-//     max-width: 320px;
-//     height: calc(100vh - 73px);
-//     background: ${White};
-//     border-left: 1px solid ${Border};
-//     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
-//     flex-direction: column;
-//     align-items: flex-start;
-//     padding: 2.5rem 2rem;
-//     gap: 1.5rem;
-//     transform: translateX(${(p) => (p.$open ? "0" : "100%")});
-//     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-//   }
-// `;
-
-// /* ================= LINKS ================= */
-// const NavLink = styled(Link)`
-//   text-decoration: none;
-//   font-size: 0.95rem;
-//   font-weight: 600;
-//   color: ${(p) => (p.$active ? PrimaryColor : Dark)};
-//   position: relative;
-//   transition: color 0.2s ease;
-
-//   &:hover {
-//     color: ${PrimaryColor};
-//   }
-
-//   &::after {
-//     content: "";
-//     position: absolute;
-//     left: 0;
-//     bottom: -4px;
-//     width: ${(p) => (p.$active ? "100%" : "0")};
-//     height: 2px;
-//     background: ${AccentGradient};
-//     transition: width 0.3s ease;
-//   }
-
-//   @media (max-width: 768px) {
-//     font-size: 1.1rem;
-//     width: 100%;
-//     padding-bottom: 0.5rem;
-//     border-bottom: 1px solid ${Border};
-//     &::after {
-//       display: none;
-//     }
-//   }
-// `;
-
-// /* ================= ACTION WRAPPER ================= */
-// const NavActions = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 1rem;
-
-//   @media (max-width: 768px) {
-//     width: 100%;
-//     flex-direction: column;
-//     gap: 0.75rem;
-//     margin-top: 1rem;
-//     border-top: 1px solid ${Border};
-//     padding-top: 1.5rem;
-//   }
-// `;
-
-// const AuthButton = styled(Link)`
-//   text-decoration: none;
-//   padding: 0.55rem 1.25rem;
-//   border-radius: 6px;
-//   font-weight: 600;
-//   font-size: 0.9rem;
-//   text-align: center;
-//   transition: all 0.2s ease;
-
-//   background: ${(p) => (p.$isPrimary ? AccentGradient : "transparent")};
-//   color: ${(p) => (p.$isPrimary ? White : Dark)};
-//   border: ${(p) => (p.$isPrimary ? "none" : `1px solid ${Border}`)};
-
-//   &:hover {
-//     opacity: 0.9;
-//     transform: translateY(-1px);
-//     border-color: ${PrimaryColor};
-//   }
-
-//   @media (max-width: 768px) {
-//     width: 100%;
-//     padding: 0.75rem;
-//   }
-// `;
-
-// /* ================= HAMBURGER ================= */
-// const Hamburger = styled.button`
-//   display: none;
-//   background: none;
-//   border: none;
-//   cursor: pointer;
-//   padding: 4px;
-
-//   @media (max-width: 768px) {
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: space-between;
-//     width: 28px;
-//     height: 21px;
-//   }
-
-//   div {
-//     width: 100%;
-//     height: 2.5px;
-//     background: ${Dark};
-//     border-radius: 2px;
-//     transition: all 0.3s ease-in-out;
-//   }
-
-//   &.open div:nth-child(1) {
-//     transform: translateY(9px) rotate(45deg);
-//     background: ${PrimaryColor};
-//   }
-
-//   &.open div:nth-child(2) {
-//     opacity: 0;
-//   }
-
-//   &.open div:nth-child(3) {
-//     transform: translateY(-9px) rotate(-45deg);
-//     background: ${Turquoise};
-//   }
-// `;
-
-// /* ================= OVERLAY ================= */
-// const Overlay = styled.div`
-//   display: ${(p) => (p.$open ? "block" : "none")};
-//   position: fixed;
-//   inset: 0;
-//   background: rgba(15, 23, 42, 0.4);
-//   backdrop-filter: blur(4px);
-//   z-index: 99;
-//   transition: opacity 0.3s ease;
-// `;
-
-// /* ================= COMPONENT ================= */
-// export default function Header() {
-//   const [open, setOpen] = useState(false);
-//   const pathname = usePathname();
-//   const [userData, setUserData] = useState(null);
-//   const { paymentSession } = useAppContext();
-//   const { cartTotalItems } = useCart();
-
+//   // Close mobile menu when clicking outside
 //   useEffect(() => {
-//     let unsubscribeDoc = null;
-
-//     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-//       if (user) {
-//         const userRef = doc(db, "users", user.uid);
-//         unsubscribeDoc = onSnapshot(userRef, (userSnap) => {
-//           if (userSnap.exists()) {
-//             setUserData(userSnap.data());
-//           }
-//         });
-//       } else {
-//         setUserData(null);
-//         if (unsubscribeDoc) {
-//           unsubscribeDoc();
-//         }
+//     const handleClickOutside = (event) => {
+//       if (menuRef.current && !menuRef.current.contains(event.target)) {
+//         setIsOpen(false);
 //       }
-//     });
+//     };
+
+//     if (isOpen) {
+//       document.addEventListener('mousedown', handleClickOutside);
+//     }
 
 //     return () => {
-//       unsubscribeAuth();
-//       if (unsubscribeDoc) unsubscribeDoc();
+//       document.removeEventListener('mousedown', handleClickOutside);
 //     };
-//   }, []);
+//   }, [isOpen]);
+
+//   // Handle smooth scroll for anchor links
+//   const handleNavClick = (e, href) => {
+//     if (href.startsWith('#')) {
+//       e.preventDefault();
+//       const targetElement = document.querySelector(href);
+//       if (targetElement) {
+//         targetElement.scrollIntoView({
+//           behavior: 'smooth',
+//           block: 'start',
+//         });
+//       }
+//     }
+//     setIsOpen(false);
+//   };
 
 //   return (
-//     <>
-//       <Overlay $open={open} onClick={() => setOpen(false)} />
+//     <NavContainer ref={menuRef}>
+//       <NavContent>
+//         {/* Logo Section */}
+//         <LogoLink 
+//           href="#home" 
+//           onClick={(e) => handleNavClick(e, '#home')}
+//         >
+//           <Image 
+//             src="/logo.jpg" 
+//             alt="The Elizabeth Foundation Logo" 
+//             width={40} 
+//             height={40} 
+//             priority
+//           />
+//         </LogoLink>
 
-//       <HeaderContainer>
-//         {paymentSession && <PaymentInProgressModal />}
-//         <Inner>
-//           <Link href="/" onClick={() => setOpen(false)} style={{ textDecoration: 'none' }}> 
-//             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-//               <img src="/logo1.png" alt="Kingsword Bag Craft Logo" style={{ height: "45px", borderRadius: "8px" }} />    
-//             </div>
-//           </Link>
+//         {/* Desktop Navigation Menu */}
+//         <MenuList>
+//           {menuItems.map((item, index) => (
+//             <MenuItem key={index}>
+//               <MenuLink 
+//                 href={item.href} 
+//                 onClick={(e) => {handleNavClick(e, item.href), router.push('/')}}
+//               >
+//                 {item.name}
+//               </MenuLink>
+//             </MenuItem>
+//           ))}
+//         </MenuList>
 
-//           <>
-//             <Nav $open={open}>
-//               <NavLink href="/" $active={pathname === "/"} onClick={() => setOpen(false)}>Home</NavLink>
-//               <NavLink href="/about" $active={pathname === "/about"} onClick={() => setOpen(false)}>About</NavLink>
-//               <NavLink href="/services" $active={pathname === "/services"} onClick={() => setOpen(false)}>Services</NavLink>
-              
-//               <NavLink href="/store" $active={pathname === "/store"} onClick={() => setOpen(false)}>Store</NavLink>
-//               <NavLink href="/pricing" $active={pathname === "/pricing"} onClick={() => setOpen(false)}>Pricing</NavLink>
-//               <NavLink href="/contact" $active={pathname === "/contact"} onClick={() => setOpen(false)}>Contact</NavLink>
-//               <NavLink href="/cart" $active={pathname === "/cart"} onClick={() => setOpen(false)}>
-//                 Cart ({cartTotalItems})
-//               </NavLink>
+//         {/* Desktop Apply Now Button */}
+//         <ApplyButtonDesktop 
+//           href="#forms" 
+//           onClick={(e) => handleNavClick(e, '#forms')}
+//         >
+//           Apply Now
+//         </ApplyButtonDesktop>
 
-//               <NavActions>
-//                 {!userData && (
-//                   <AuthButton 
-//                     href="/signup" 
-//                     $isPrimary={false}
-//                     onClick={() => setOpen(false)}
-//                   >
-//                     Sign Up
-//                   </AuthButton>
-//                 )}
+//         {/* Mobile Hamburger Button */}
+//         <HamburgerButton 
+//           onClick={() => setIsOpen(!isOpen)} 
+//           aria-label="Toggle Menu"
+//         >
+//           <HamburgerLine open={isOpen} />
+//           <HamburgerLine open={isOpen} />
+//           <HamburgerLine open={isOpen} />
+//         </HamburgerButton>
+//       </NavContent>
 
-//                 <AuthButton 
-//                   href={userData ? "/dashboard" : "/login"} 
-//                   $isPrimary={true}
-//                   onClick={() => setOpen(false)}
-//                 >
-//                   {userData ? "My Dashboard" : "Login"}
-//                 </AuthButton>
-//               </NavActions>
-//             </Nav>
-
-//             <Hamburger
-//               onClick={() => setOpen(!open)}
-//               className={open ? "open" : ""}
-//               aria-label="Toggle navigation menu"
+//       {/* Mobile Menu Dropdown / Overlay */}
+//       <MobileMenuOverlay open={isOpen}>
+//         <MobileMenuList>
+//           {menuItems.map((item, index) => (
+//             <MobileMenuItem key={index}>
+//               <MobileMenuLink 
+//                 href={item.href} 
+//                 onClick={(e) => handleNavClick(e, item.href)}
+//               >
+//                 {item.name}
+//               </MobileMenuLink>
+//             </MobileMenuItem>
+//           ))}
+//           <MobileMenuItem>
+//             <ApplyButtonMobile 
+//               href="#forms" 
+//               onClick={(e) => handleNavClick(e, '#forms')}
 //             >
-//               <div />
-//               <div />
-//               <div />
-//             </Hamburger>
-//           </>
-//         </Inner>
-//       </HeaderContainer>
-
-//       <div style={{ height: "73px" }} />
-//     </>
+//               Apply Now
+//             </ApplyButtonMobile>
+//           </MobileMenuItem>
+//         </MobileMenuList>
+//       </MobileMenuOverlay>
+//     </NavContainer>
 //   );
-// }
+// };
+
+// export default Header;
+
+// // --- Styled Components ---
+
+// const NavContainer = styled.header`
+//   position: fixed;
+//   top: 0;
+//   width: 100%;
+//   background-color: #ffffff;
+//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+//   z-index: 1000;
+//   padding: 12px 24px;
+//   scroll-behavior: smooth;
+// `;
+
+// const NavContent = styled.nav`
+//   max-width: 1440px;
+//   margin: 0 auto;
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   gap: 16px;
+// `;
+
+// const LogoLink = styled.a`
+//   display: flex;
+//   align-items: center;
+//   flex-shrink: 0;
+//   cursor: pointer;
+// `;
+
+// const MenuList = styled.ul`
+//   display: flex;
+//   align-items: center;
+//   list-style: none;
+//   gap: 20px;
+//   margin: 0;
+//   padding: 0;
+//   overflow-x: auto;
+//   white-space: nowrap;
+
+//   /* Hide scrollbar for clean design */
+//   &::-webkit-scrollbar {
+//     display: none;
+//   }
+//   scrollbar-width: none;
+
+//   @media (max-width: 1100px) {
+//     display: none;
+//   }
+// `;
+
+// const MenuItem = styled.li`
+//   display: inline-block;
+// `;
+
+// const MenuLink = styled.a`
+//   font-family: inherit;
+//   font-size: 14px;
+//   font-weight: 500;
+//   color: #334155;
+//   text-decoration: none;
+//   transition: color 0.2s ease;
+//   cursor: pointer;
+
+//   &:hover {
+//     color: #881313;
+//   }
+// `;
+
+// const ApplyButtonDesktop = styled.a`
+//   background-color: #7f1d1d;
+//   color: #ffffff;
+//   font-size: 14px;
+//   font-weight: 600;
+//   padding: 10px 24px;
+//   border-radius: 50px;
+//   text-decoration: none;
+//   flex-shrink: 0;
+//   transition: background-color 0.2s ease;
+//   cursor: pointer;
+
+//   &:hover {
+//     background-color: #601010;
+//   }
+
+//   @media (max-width: 1100px) {
+//     display: none;
+//   }
+// `;
+
+// const HamburgerButton = styled.button`
+//   display: none;
+//   flex-direction: column;
+//   justify-content: space-between;
+//   width: 28px;
+//   height: 20px;
+//   background: transparent;
+//   border: none;
+//   cursor: pointer;
+//   padding: 0;
+//   z-index: 1010;
+
+//   @media (max-width: 1100px) {
+//     display: flex;
+//   }
+// `;
+
+// const HamburgerLine = styled.span`
+//   width: 100%;
+//   height: 2.5px;
+//   background-color: #334155;
+//   border-radius: 2px;
+//   transition: all 0.3s ease;
+
+//   &:nth-child(1) {
+//     transform: ${(props) => (props.open ? 'rotate(45deg) translate(5px, 5px)' : 'none')};
+//   }
+//   &:nth-child(2) {
+//     opacity: ${(props) => (props.open ? '0' : '1')};
+//   }
+//   &:nth-child(3) {
+//     transform: ${(props) => (props.open ? 'rotate(-45deg) translate(5px, -5px)' : 'none')};
+//   }
+// `;
+
+// const MobileMenuOverlay = styled.div`
+//   display: none;
+
+//   @media (max-width: 1100px) {
+//     display: flex;
+//     position: fixed;
+//     top: 65px;
+//     left: 0;
+//     width: 100vw;
+//     height: calc(100vh - 65px);
+//     background-color: #ffffff;
+//     flex-direction: column;
+//     padding: 24px;
+//     overflow-y: auto;
+//     transition: transform 0.3s ease, opacity 0.3s ease;
+//     transform: ${(props) => (props.open ? 'translateX(0)' : 'translateX(100%)')};
+//     opacity: ${(props) => (props.open ? '1' : '0')};
+//     pointer-events: ${(props) => (props.open ? 'auto' : 'none')};
+//     box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+//   }
+// `;
+
+// const MobileMenuList = styled.ul`
+//   list-style: none;
+//   padding: 0;
+//   margin: 0;
+//   display: flex;
+//   flex-direction: column;
+//   gap: 16px;
+//   align-items: center;
+//   text-align: center;
+// `;
+
+// const MobileMenuItem = styled.li`
+//   width: 100%;
+// `;
+
+// const MobileMenuLink = styled.a`
+//   font-size: 16px;
+//   font-weight: 600;
+//   color: #334155;
+//   text-decoration: none;
+//   display: block;
+//   padding: 8px 0;
+//   transition: color 0.2s ease;
+//   cursor: pointer;
+
+//   &:hover {
+//     color: #7f1d1d;
+//   }
+// `;
+
+// const ApplyButtonMobile = styled.a`
+//   display: inline-block;
+//   background-color: #7f1d1d;
+//   color: #ffffff;
+//   font-size: 15px;
+//   font-weight: 700;
+//   padding: 12px 32px;
+//   border-radius: 50px;
+//   text-decoration: none;
+//   margin-top: 10px;
+//   transition: background-color 0.2s ease;
+//   cursor: pointer;
+
+//   &:hover {
+//     background-color: #601010;
+//   }
+// `;
 
 
 
+'use client';
 
+import React, { useState, useEffect, useRef } from 'react';
+import styled from 'styled-components';
+import Image from 'next/image';
+import { useRouter, usePathname } from 'next/navigation';
 
-"use client";
-
-import { useState, useEffect } from "react";
-import styled from "styled-components";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { auth, db } from "../firebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
-import PaymentInProgressModal from "./PaymentInProgressModal";
-import { useAppContext } from "./Context";
-import { useCart } from "@/components/CartContext";
-import HostingExpiryGuard from "./HostingExpiryGuard";
-
-/* ================= COLORS ================= */
-const PrimaryColor = "#00AEEF"; // Bright Cyan / Teal Blue from the logo
-const AccentGradient = "linear-gradient(135deg, #0B1B48 0%, #00AEEF 100%)"; // Dark Navy -> Bright Cyan
-const Dark = "#0B1B48"; // Updated to Enitz Dark Navy Blue
-const Border = "#e2e8f0";
-const White = "#ffffff";
-const Turquoise = "#00AEEF";
-// const ThemeGradient = "linear-gradient(135deg, #0B1B48 0%, #00AEEF 100%)";
-
-/* ================= HEADER ================= */
-const HeaderContainer = styled.header`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 300;
-
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
-  border-bottom: 1px solid ${Border};
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-`;
-
-const Inner = styled.div`
-  max-width: 1200px;
-  margin: auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.3rem 1.5rem;
-
- span {
-    background: ${AccentGradient};
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight:900;
-  }
-
-
-`;
-
-/* ================= LOGO ================= */
-const Logo = styled.div`
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: ${Dark};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  span {
-    background: ${AccentGradient};
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-`;
-
-/* ================= NAV ================= */
-const Nav = styled.nav`
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-
-  @media (max-width: 768px) {
-    position: fixed;
-    top: 73px;
-    right: 0;
-    width: 80%;
-    max-width: 320px;
-    height: calc(100vh - 73px);
-    background: ${White};
-    border-left: 1px solid ${Border};
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 2.5rem 2rem;
-    gap: 1.5rem;
-    transform: translateX(${(p) => (p.$open ? "0" : "100%")});
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-`;
-
-/* ================= LINKS ================= */
-const NavLink = styled(Link)`
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: ${(p) => (p.$active ? PrimaryColor : Dark)};
-  position: relative;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: ${PrimaryColor};
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -4px;
-    width: ${(p) => (p.$active ? "100%" : "0")};
-    height: 2px;
-    background: ${AccentGradient};
-    transition: width 0.3s ease;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-    width: 100%;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid ${Border};
-    &::after {
-      display: none;
-    }
-  }
-`;
-
-/* ================= ACTION WRAPPER ================= */
-const NavActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1rem;
-    border-top: 1px solid ${Border};
-    padding-top: 1.5rem;
-  }
-`;
-
-const AuthButton = styled(Link)`
-  text-decoration: none;
-  padding: 0.55rem 1.25rem;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-align: center;
-  transition: all 0.2s ease;
-
-  background: ${(p) => (p.$isPrimary ? AccentGradient : "transparent")};
-  color: ${(p) => (p.$isPrimary ? White : Dark)};
-  border: ${(p) => (p.$isPrimary ? "none" : `1px solid ${Border}`)};
-
-  &:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    border-color: ${PrimaryColor};
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    padding: 0.75rem;
-  }
-`;
-
-/* ================= HAMBURGER ================= */
-const Hamburger = styled.button`
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 28px;
-    height: 21px;
-  }
-
-  div {
-    width: 100%;
-    height: 2.5px;
-    background: ${Dark};
-    border-radius: 2px;
-    transition: all 0.3s ease-in-out;
-  }
-
-  &.open div:nth-child(1) {
-    transform: translateY(9px) rotate(45deg);
-    background: ${PrimaryColor};
-  }
-
-  &.open div:nth-child(2) {
-    opacity: 0;
-  }
-
-  &.open div:nth-child(3) {
-    transform: translateY(-9px) rotate(-45deg);
-    background: ${Turquoise};
-  }
-`;
-
-/* ================= OVERLAY ================= */
-const Overlay = styled.div`
-  display: ${(p) => (p.$open ? "block" : "none")};
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
-  z-index: 99;
-  transition: opacity 0.3s ease;
-`;
-
-/* ================= COMPONENT ================= */
-export default function Header() {
-  const [open, setOpen] = useState(false);
+const Header = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef(null);
+  const router = useRouter();
   const pathname = usePathname();
-  const [userData, setUserData] = useState(null);
-  const { paymentSession } = useAppContext();
-  const { cartTotalItems } = useCart();
 
+  const menuItems = [
+    { name: 'Home', href: '/' },
+    { name: 'Story', href: '#story' },
+    { name: 'Impact', href: '#impact' },
+    { name: 'Events', href: '#events' },
+    { name: 'Team', href: '#team' },
+    { name: 'Donate', href: '#donate' },
+    { name: 'Gallery', href: '#gallery' },
+    { name: 'Reviews', href: '#reviews' },
+    { name: 'Forms', href: '#forms' },
+    { name: 'Contact', href: '#contact' },
+    { name: 'School Fees', href: '/school-fees-support' },
+    
+    { name: "Elizabeth's Story", href: '/elizabeth-story' },
+    { name: 'Blue Bird Memorial', href: '/blue-bird-memorial' },
+  ];
+
+  // Close mobile menu when clicking outside
   useEffect(() => {
-    let unsubscribeDoc = null;
-
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        unsubscribeDoc = onSnapshot(userRef, (userSnap) => {
-          if (userSnap.exists()) {
-            setUserData(userSnap.data());
-          }
-        });
-      } else {
-        setUserData(null);
-        if (unsubscribeDoc) {
-          unsubscribeDoc();
-        }
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsOpen(false);
       }
-    });
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
 
     return () => {
-      unsubscribeAuth();
-      if (unsubscribeDoc) unsubscribeDoc();
+      document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [isOpen]);
+
+  // Handle auto-scroll on landing page if navigated with a hash
+  useEffect(() => {
+    if (pathname === '/' && window.location.hash) {
+      const targetElement = document.querySelector(window.location.hash);
+      if (targetElement) {
+        setTimeout(() => {
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }, 100);
+      }
+    }
+  }, [pathname]);
+
+  // Handle smooth scroll or cross-page routing for anchor links
+  const handleNavClick = (e, href) => {
+    setIsOpen(false);
+
+    // If it's a direct page link (e.g. /blue-bird-memorial)
+    if (!href.startsWith('#')) {
+      return; // Let standard Next.js Link routing handle it if wrapped, or router.push
+    }
+
+    e.preventDefault();
+
+    if (pathname !== '/') {
+      // If we are not on the landing page, navigate to the landing page with the hash
+      router.push(`/${href}`);
+    } else {
+      // If we are already on the landing page, just scroll smoothly
+      const targetElement = document.querySelector(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+        // Update URL hash without jumping
+        window.history.pushState(null, '', href);
+      }
+    }
+  };
 
   return (
-    <>
-      <Overlay $open={open} onClick={() => setOpen(false)} />
+    <NavContainer ref={menuRef}>
+      <NavContent>
+        {/* Logo Section */}
+        <LogoLink 
+          href="/" 
+          onClick={(e) => {
+            if (pathname !== '/') {
+              router.push('/');
+            } else {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            setIsOpen(false);
+          }}
+        >
+          <Image 
+            src="/logo.jpg" 
+            alt="The Elizabeth Foundation Logo" 
+            width={40} 
+            height={40} 
+            priority
+          />
+        </LogoLink>
 
-      <HeaderContainer>
-        {paymentSession && <PaymentInProgressModal />}
-        <Inner>
-          <Link href="/" onClick={() => setOpen(false)} style={{ textDecoration: 'none' }}> 
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <img src="/logo.jpeg" alt="Enitz Global Limited Logo" style={{ height: "45px", borderRadius: "8px" }} />    
-            <span style={{color:`${AccentGradient}`}}>ENITZ GLOBAL</span>
-            </div>
-          </Link>
+        {/* Desktop Navigation Menu */}
+        <MenuList>
+          {menuItems.map((item, index) => (
+            <MenuItem key={index}>
+              <MenuLink 
+                href={item.href} 
+                onClick={(e) => {
+                  if (item.href.startsWith('#')) {
+                    handleNavClick(e, item.href);
+                  } else {
+                    setIsOpen(false);
+                    router.push(item.href);
+                  }
+                }}
+              >
+                {item.name}
+              </MenuLink>
+            </MenuItem>
+          ))}
+        </MenuList>
 
-          <>
-            <Nav $open={open}>
-              <NavLink href="/" $active={pathname === "/"} onClick={() => setOpen(false)}>Home</NavLink>
-              <NavLink href="/about" $active={pathname === "/about"} onClick={() => setOpen(false)}>About</NavLink>
-              
-              <NavLink href="/store" $active={pathname === "/store"} onClick={() => setOpen(false)}>Store</NavLink>
-              <NavLink href="/contact" $active={pathname === "/contact"} onClick={() => setOpen(false)}>Contact</NavLink>
-              <NavLink href="/cart" $active={pathname === "/cart"} onClick={() => setOpen(false)}>
-                Cart ({cartTotalItems})
-              </NavLink>
+        {/* Desktop Apply Now Button */}
+        <ApplyButtonDesktop 
+          href="#forms" 
+          onClick={(e) => handleNavClick(e, '#forms')}
+        >
+          Apply Now
+        </ApplyButtonDesktop>
 
-              <NavActions>
-                {!userData && (
-                  <AuthButton 
-                    href="/signup" 
-                    $isPrimary={false}
-                    onClick={() => setOpen(false)}
-                  >
-                    Sign Up
-                  </AuthButton>
-                )}
+        {/* Mobile Hamburger Button */}
+        <HamburgerButton 
+          onClick={() => setIsOpen(!isOpen)} 
+          aria-label="Toggle Menu"
+        >
+          <HamburgerLine open={isOpen} />
+          <HamburgerLine open={isOpen} />
+          <HamburgerLine open={isOpen} />
+        </HamburgerButton>
+      </NavContent>
 
-                <AuthButton 
-                  href={userData ? "/dashboard" : "/login"} 
-                  $isPrimary={true}
-                  onClick={() => setOpen(false)}
-                >
-                  {userData ? "My Dashboard" : "Login"}
-                </AuthButton>
-              </NavActions>
-            </Nav>
-
-            <Hamburger
-              onClick={() => setOpen(!open)}
-              className={open ? "open" : ""}
-              aria-label="Toggle navigation menu"
+      {/* Mobile Menu Dropdown / Overlay */}
+      <MobileMenuOverlay open={isOpen}>
+        <MobileMenuList>
+          {menuItems.map((item, index) => (
+            <MobileMenuItem key={index}>
+              <MobileMenuLink 
+                href={item.href} 
+                onClick={(e) => {
+                  if (item.href.startsWith('#')) {
+                    handleNavClick(e, item.href);
+                  } else {
+                    setIsOpen(false);
+                    router.push(item.href);
+                  }
+                }}
+              >
+                {item.name}
+              </MobileMenuLink>
+            </MobileMenuItem>
+          ))}
+          <MobileMenuItem>
+            <ApplyButtonMobile 
+              href="#forms" 
+              onClick={(e) => handleNavClick(e, '#forms')}
             >
-              <div />
-              <div />
-              <div />
-            </Hamburger>
-          </>
-        </Inner>
-      </HeaderContainer>
-
-      <div style={{ height: "73px" }} />
-      <HostingExpiryGuard/>
-    </>
+              Apply Now
+            </ApplyButtonMobile>
+          </MobileMenuItem>
+        </MobileMenuList>
+      </MobileMenuOverlay>
+    </NavContainer>
   );
-}
+};
+
+export default Header;
+
+// --- Styled Components ---
+
+const NavContainer = styled.header`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  padding: 12px 24px;
+  scroll-behavior: smooth;
+`;
+
+const NavContent = styled.nav`
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+`;
+
+const LogoLink = styled.a`
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
+`;
+
+const MenuList = styled.ul`
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+
+  @media (max-width: 1100px) {
+    display: none;
+  }
+`;
+
+const MenuItem = styled.li`
+  display: inline-block;
+`;
+
+const MenuLink = styled.a`
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    color: #881313;
+  }
+`;
+
+const ApplyButtonDesktop = styled.a`
+  background-color: #7f1d1d;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #601010;
+  }
+
+  @media (max-width: 1100px) {
+    display: none;
+  }
+`;
+
+const HamburgerButton = styled.button`
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1010;
+
+  @media (max-width: 1100px) {
+    display: flex;
+  }
+`;
+
+const HamburgerLine = styled.span`
+  width: 100%;
+  height: 2.5px;
+  background-color: #334155;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+
+  &:nth-child(1) {
+    transform: ${(props) => (props.open ? 'rotate(45deg) translate(5px, 5px)' : 'none')};
+  }
+  &:nth-child(2) {
+    opacity: ${(props) => (props.open ? '0' : '1')};
+  }
+  &:nth-child(3) {
+    transform: ${(props) => (props.open ? 'rotate(-45deg) translate(5px, -5px)' : 'none')};
+  }
+`;
+
+const MobileMenuOverlay = styled.div`
+  display: none;
+
+  @media (max-width: 1100px) {
+    display: flex;
+    position: fixed;
+    top: 65px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 65px);
+    background-color: #ffffff;
+    flex-direction: column;
+    padding: 24px;
+    overflow-y: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: ${(props) => (props.open ? 'translateX(0)' : 'translateX(100%)')};
+    opacity: ${(props) => (props.open ? '1' : '0')};
+    pointer-events: ${(props) => (props.open ? 'auto' : 'none')};
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  }
+`;
+
+const MobileMenuList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+`;
+
+const MobileMenuItem = styled.li`
+  width: 100%;
+`;
+
+const MobileMenuLink = styled.a`
+  font-size: 16px;
+  font-weight: 600;
+  color: #334155;
+  text-decoration: none;
+  display: block;
+  padding: 8px 0;
+  transition: color 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    color: #7f1d1d;
+  }
+`;
+
+const ApplyButtonMobile = styled.a`
+  display: inline-block;
+  background-color: #7f1d1d;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #601010;
+  }
+`;

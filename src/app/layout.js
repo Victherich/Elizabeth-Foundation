@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "ENITZ GLOBAL",
-  description: "Quality Products. Great Prices",
+  title: "THE ELIZABETH FOUNDATION SS",
+  description: "THE ELIZABETH FOUNDATION SS",
    icons: {
     icon: "/favicon.ico",
   },
