@@ -1,6 +1,3 @@
-
-
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,23 +9,20 @@ import {
   updateDoc, 
   deleteDoc, 
   doc, 
-  serverTimestamp,
-  query,
-  where,
-  writeBatch
+  serverTimestamp
 } from "firebase/firestore";
 import styled from "styled-components";
 import Swal from "sweetalert2";
+// 🎨 ENITZ GLOBAL BRAND THEME COLORS
+const PrimaryNavy ="rgba(115, 23, 28, 0.95) ";
+const PrimaryCyan = "rgba(85, 15, 18, 0.95)";
+const ThemeGradient = "linear-gradient(135deg, rgba(115, 23, 28, 0.95) 0%, rgba(85, 15, 18, 0.95) 100%)";
 
-// 🎨 UPDATED THEME COLORS
-const PrimaryNavy = "#0B1B48";
-const PrimaryCyan = "#00AEEF";
 const Dark = "#0f172a";
 const Border = "#cbd5e1";
 const White = "#ffffff";
 const TextMuted = "#475569";
 const LightBg = "#f8fafc";
-const ThemeGradient = "linear-gradient(135deg, #0B1B48 0%, #00AEEF 100%)";
 const Danger = "#ef4444";
 
 // 🌟 Styled Components (Strict max 10px spacing/gaps/margins/padding rule)
@@ -125,13 +119,13 @@ const PrimaryButton = styled.button`
   }
 `;
 
-const CategoriesGrid = styled.div`
+const AnnouncementsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 10px;
 `;
 
-const CategoryCard = styled.div`
+const AnnouncementCard = styled.div`
   background: ${White};
   border-radius: 10px;
   padding: 10px;
@@ -156,14 +150,14 @@ const CardHeader = styled.div`
   align-items: center;
 `;
 
-const CategoryName = styled.h3`
+const AnnouncementName = styled.h3`
   margin: 0;
   font-size: 1rem;
   font-weight: 800;
   color: ${Dark};
 `;
 
-const CategoryDesc = styled.p`
+const AnnouncementDesc = styled.p`
   margin: 0;
   font-size: 0.85rem;
   color: ${TextMuted};
@@ -335,231 +329,205 @@ const SaveButton = styled.button`
   }
 `;
 
-export default function CategoriesCrudPage() {
-  const [categories, setCategories] = useState([]);
+export default function AnnouncementsCrudPage() {
+  const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Modal State Controls
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [titleInput, setTitleInput] = useState("");
-  const [descInput, setDescInput] = useState("");
+  const [messageInput, setMessageInput] = useState("");
+  const [linkInput, setLinkInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchCategories = async () => {
+  const fetchAnnouncements = async () => {
     try {
       setLoading(true);
-      const querySnapshot = await getDocs(collection(db, "categories"));
+      const querySnapshot = await getDocs(collection(db, "announcements"));
       const list = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setCategories(list);
+      setAnnouncements(list);
     } catch (error) {
-      Swal.fire("Error", "Failed to fetch categories.", "error");
+      Swal.fire("Error", "Failed to fetch announcements.", "error");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchAnnouncements();
   }, []);
 
   const openAddModal = () => {
     setEditingId(null);
     setTitleInput("");
-    setDescInput("");
+    setMessageInput("");
+    setLinkInput("");
     setIsModalOpen(true);
   };
 
-  const openEditModal = (cat) => {
-    setEditingId(cat.id);
-    setTitleInput(cat.title);
-    setDescInput(cat.description || "");
+  const openEditModal = (item) => {
+    setEditingId(item.id);
+    setTitleInput(item.title);
+    setMessageInput(item.message || "");
+    setLinkInput(item.link || "");
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setTitleInput("");
-    setDescInput("");
+    setMessageInput("");
+    setLinkInput("");
     setEditingId(null);
   };
 
-  const handleSaveCategory = async (e) => {
+  const handleSaveAnnouncement = async (e) => {
     e.preventDefault();
     if (!titleInput.trim()) {
-      Swal.fire("Validation", "Please enter a category title.", "warning");
+      Swal.fire("Validation", "Please enter an announcement title.", "warning");
       return;
     }
 
     try {
       if (editingId) {
-        const docRef = doc(db, "categories", editingId);
+        const docRef = doc(db, "announcements", editingId);
         await updateDoc(docRef, {
           title: titleInput,
-          description: descInput,
+          message: messageInput,
+          link: linkInput,
         });
-        Swal.fire("Updated!", "Category updated successfully.", "success");
+        Swal.fire("Updated!", "Announcement updated successfully.", "success");
       } else {
-        await addDoc(collection(db, "categories"), {
+        await addDoc(collection(db, "announcements"), {
           title: titleInput,
-          description: descInput,
+          message: messageInput,
+          link: linkInput,
           createdAt: serverTimestamp(),
         });
-        Swal.fire("Success!", "Category added successfully.", "success");
+        Swal.fire("Success!", "Announcement posted successfully.", "success");
       }
       closeModal();
-      fetchCategories();
+      fetchAnnouncements();
     } catch (error) {
-      Swal.fire("Error", "Could not save category.", "error");
+      Swal.fire("Error", "Could not save announcement.", "error");
     }
   };
 
-  const handleDeleteCategory = async (categoryToDelete) => {
-    try {
-      const productsQuery = query(collection(db, "products"), where("categoryId", "==", categoryToDelete.id));
-      const productsSnapshot = await getDocs(productsQuery);
+  const handleDeleteAnnouncement = async (announcementToDelete) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This announcement will be removed permanently!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: Danger,
+      cancelButtonColor: TextMuted,
+      confirmButtonText: "Yes, delete it!",
+    });
 
-      if (!productsSnapshot.empty) {
-        const categoryOptions = categories
-          .filter(cat => cat.id !== categoryToDelete.id)
-          .reduce((acc, cat) => {
-            acc[cat.id] = cat.title;
-            return acc;
-          }, { "uncategorized": "Move to Uncategorized" });
-
-        const { value: targetChoice } = await Swal.fire({
-          title: "Category Contains Products!",
-          text: `There are ${productsSnapshot.size} product(s) in "${categoryToDelete.title}". Where should these products go before deletion?`,
-          input: "select",
-          inputOptions: categoryOptions,
-          inputPlaceholder: "Select a fallback category",
-          showCancelButton: true,
-          confirmButtonText: "Proceed & Reassign",
-          confirmButtonColor: PrimaryCyan,
-          cancelButtonColor: TextMuted,
-        });
-
-        if (!targetChoice) return;
-
-        const batch = writeBatch(db);
-
-        productsSnapshot.forEach((productDoc) => {
-          batch.update(productDoc.ref, { 
-            categoryId: targetChoice === "uncategorized" ? null : targetChoice,
-            categoryName: targetChoice === "uncategorized" ? "Uncategorized" : categoryOptions[targetChoice]
-          });
-        });
-
-        const categoryRef = doc(db, "categories", categoryToDelete.id);
-        batch.delete(categoryRef);
-
-        await batch.commit();
-        Swal.fire("Success!", "Category deleted and products safely reassigned.", "success");
-        fetchCategories();
-        return;
+    if (result.isConfirmed) {
+      try {
+        await deleteDoc(doc(db, "announcements", announcementToDelete.id));
+        Swal.fire("Deleted!", "Announcement has been removed.", "success");
+        fetchAnnouncements();
+      } catch (error) {
+        Swal.fire("Error", "Could not delete announcement.", "error");
       }
-
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "This action cannot be undone!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: Danger,
-        cancelButtonColor: TextMuted,
-        confirmButtonText: "Yes, delete it!",
-      });
-
-      if (result.isConfirmed) {
-        await deleteDoc(doc(db, "categories", categoryToDelete.id));
-        Swal.fire("Deleted!", "Category has been removed.", "success");
-        fetchCategories();
-      }
-    } catch (error) {
-      Swal.fire("Error", "Could not delete category.", "error");
     }
   };
 
-  const filteredCategories = categories.filter((cat) =>
-    cat.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredAnnouncements = announcements.filter((item) =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
-    return <LoadingContainer>Loading categories...</LoadingContainer>;
+    return <LoadingContainer>Loading announcements...</LoadingContainer>;
   }
 
   return (
     <Container>
       <HeaderBanner>
-        <ColorfulTitle>Product Categories Management 👜</ColorfulTitle>
-        <ColorfulSub>Organize your luxury bag collections, add new artisanal categories, and manage inventory layouts.</ColorfulSub>
+        <ColorfulTitle>Announcements Management 📢</ColorfulTitle>
+        <ColorfulSub>Broadcast store-wide updates, flash sales, and important notices to your customers.</ColorfulSub>
       </HeaderBanner>
 
       <ActionRow>
-        <ColorfulSectionTitle>All Categories ({categories.length})</ColorfulSectionTitle>
+        <ColorfulSectionTitle>All Announcements ({announcements.length})</ColorfulSectionTitle>
      
         <StyledInput 
           type="text" 
-          placeholder="Search categories by name..." 
+          placeholder="Search announcements..." 
           value={searchQuery} 
           onChange={(e) => setSearchQuery(e.target.value)} 
           style={{ maxWidth: "250px", marginRight: "10px" }}
         />
 
         <PrimaryButton onClick={openAddModal}>
-          <span>+ Add Category</span>
+          <span>+ Add Announcement</span>
         </PrimaryButton>
       </ActionRow>
 
-      {filteredCategories.length === 0 ? (
-        <LoadingContainer>No categories found. Click "+ Add Category" to create one.</LoadingContainer>
+      {filteredAnnouncements.length === 0 ? (
+        <LoadingContainer>No announcements found. Click "+ Add Announcement" to create one.</LoadingContainer>
       ) : (
-        <CategoriesGrid>
-          {filteredCategories.map((cat) => (
-            <CategoryCard key={cat.id}>
+        <AnnouncementsGrid>
+          {filteredAnnouncements.map((item) => (
+            <AnnouncementCard key={item.id}>
               <CardHeader>
-                <CategoryName>
-                  {cat.title ? cat.title.charAt(0).toUpperCase() + cat.title.slice(1) : ""}
-                </CategoryName>
+                <AnnouncementName>
+                  {item.title ? item.title.charAt(0).toUpperCase() + item.title.slice(1) : ""}
+                </AnnouncementName>
               </CardHeader>
-              <CategoryDesc>
+              <AnnouncementDesc>
                 {(() => {
-                  const desc = cat.description || "No description provided.";
-                  return desc ? desc.charAt(0).toUpperCase() + desc.slice(1) : "";
+                  const msg = item.message || "No message content.";
+                  return msg ? msg.charAt(0).toUpperCase() + msg.slice(1) : "";
                 })()}
-              </CategoryDesc>
+              </AnnouncementDesc>
+              {item.link && (
+                <AnnouncementDesc style={{ color: PrimaryCyan, fontSize: "0.8rem", wordBreak: "break-all" }}>
+                  Link: {item.link}
+                </AnnouncementDesc>
+              )}
               <ButtonGroup>
-                <EditButton onClick={() => openEditModal(cat)}>Edit</EditButton>
-                <DeleteButton onClick={() => handleDeleteCategory(cat)}>Delete</DeleteButton>
+                <EditButton onClick={() => openEditModal(item)}>Edit</EditButton>
+                <DeleteButton onClick={() => handleDeleteAnnouncement(item)}>Delete</DeleteButton>
               </ButtonGroup>
-            </CategoryCard>
+            </AnnouncementCard>
           ))}
-        </CategoriesGrid>
+        </AnnouncementsGrid>
       )}
 
       {/* 🌟 Custom Form Modal */}
       {isModalOpen && (
         <ModalOverlay onClick={closeModal}>
           <ModalContainer onClick={(e) => e.stopPropagation()}>
-            <ModalTitle>{editingId ? "Edit Category" : "Create New Category"}</ModalTitle>
-            <form onSubmit={handleSaveCategory} style={{ display: "flex", flexDirection: "column", gap: "10px", margin: 0 }}>
+            <ModalTitle>{editingId ? "Edit Announcement" : "Create New Announcement"}</ModalTitle>
+            <form onSubmit={handleSaveAnnouncement} style={{ display: "flex", flexDirection: "column", gap: "10px", margin: 0 }}>
               <StyledInput 
                 type="text" 
-                placeholder="Category Title" 
+                placeholder="Announcement Title" 
                 value={titleInput} 
                 onChange={(e) => setTitleInput(e.target.value)} 
                 required 
               />
               <StyledTextarea 
-                placeholder="Category Description" 
-                value={descInput} 
-                onChange={(e) => setDescInput(e.target.value)} 
+                placeholder="Announcement Message" 
+                value={messageInput} 
+                onChange={(e) => setMessageInput(e.target.value)} 
+              />
+              <StyledInput 
+                type="text" 
+                placeholder="Optional Target URL / Link (e.g. /shop)" 
+                value={linkInput} 
+                onChange={(e) => setLinkInput(e.target.value)} 
               />
               <ModalActions>
                 <CancelButton type="button" onClick={closeModal}>Cancel</CancelButton>
-                <SaveButton type="submit">{editingId ? "Save Changes" : "Create Category"}</SaveButton>
+                <SaveButton type="submit">{editingId ? "Save Changes" : "Post Announcement"}</SaveButton>
               </ModalActions>
             </form>
           </ModalContainer>

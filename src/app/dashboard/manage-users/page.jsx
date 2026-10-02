@@ -397,10 +397,11 @@ import {
 import styled from "styled-components";
 import Swal from "sweetalert2";
 
-// 🎨 NEW THEME COLORS & GRADIENTS (Navy & Cyan Theme)
-const PrimaryNavy = "#0B1B48";
-const PrimaryCyan = "#00AEEF";
-const ThemeGradient = "linear-gradient(135deg, #0B1B48 0%, #00AEEF 100%)";
+// 🎨 ENITZ GLOBAL BRAND THEME COLORS
+const PrimaryNavy ="rgba(115, 23, 28, 0.95) ";
+const PrimaryCyan = "rgba(85, 15, 18, 0.95)";
+const ThemeGradient = "linear-gradient(135deg, rgba(115, 23, 28, 0.95) 0%, rgba(85, 15, 18, 0.95) 100%)";
+
 const Dark = "#0f172a";
 const Border = "#cbd5e1";
 const White = "#ffffff";

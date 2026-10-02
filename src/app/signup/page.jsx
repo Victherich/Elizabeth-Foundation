@@ -485,14 +485,16 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
 
 // 🎨 ENITZ GLOBAL BRAND THEME COLORS
-const PrimaryNavy = "#0B1B48";
-const PrimaryCyan = "#00AEEF";
+const PrimaryNavy ="rgba(115, 23, 28, 0.95) ";
+const PrimaryCyan = "rgba(85, 15, 18, 0.95)";
+const ThemeGradient = "linear-gradient(135deg, rgba(115, 23, 28, 0.95) 0%, rgba(85, 15, 18, 0.95) 100%)";
+
 const Dark = "#0f172a";
 const Border = "#cbd5e1";
 const White = "#ffffff";
 const LightBg = "#f8fafc";
 const TextMuted = "#475569";
-const ThemeGradient = "linear-gradient(135deg, #0B1B48 0%, #00AEEF 100%)";
+
 
 // 🌟 Styled Components (Clean, Professional Spacing)
 const PageContainer = styled.div`
@@ -501,7 +503,7 @@ const PageContainer = styled.div`
   align-items: center;
   justify-content: center;
   background: ${LightBg};
-  padding: 24px 16px;
+  padding: 100px 16px;
   box-sizing: border-box;
 `;
 
@@ -839,7 +841,8 @@ export default function UserSignup() {
         {/* Left Visual Branding Panel */}
         <BrandingSide>
           <BrandLogo>
-            ENITZ <span>GLOBAL</span>
+            ELIZABETH FOUNDATION SS
+            {/* <span>FOUNDATION</span> */}
           </BrandLogo>
           <BrandingContent>
             <Headline>Create Your Account</Headline>

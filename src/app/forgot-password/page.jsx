@@ -301,15 +301,16 @@ import Swal from "sweetalert2";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
 
-// 🎨 ENITZ GLOBAL BRAND THEME COLORS
-const PrimaryNavy = "#0B1B48";
-const PrimaryCyan = "#00AEEF";
+const PrimaryNavy ="rgba(115, 23, 28, 0.95) ";
+const PrimaryCyan = "rgba(85, 15, 18, 0.95)";
+const ThemeGradient = "linear-gradient(135deg, rgba(115, 23, 28, 0.95) 0%, rgba(85, 15, 18, 0.95) 100%)";
+
 const Dark = "#0f172a";
 const Border = "#cbd5e1";
 const White = "#ffffff";
 const LightBg = "#f8fafc";
 const TextMuted = "#475569";
-const ThemeGradient = "linear-gradient(135deg, #0B1B48 0%, #00AEEF 100%)";
+
 
 // 🌟 Styled Components (Clean, Professional Spacing)
 const PageContainer = styled.div`
@@ -540,7 +541,8 @@ export default function ForgotPassword() {
         {/* Left Visual Branding Panel */}
         <BrandingSide>
           <BrandLogo>
-            ENITZ <span>GLOBAL</span>
+            ELIZABETH FOUNDATION SS 
+            {/* <span>GLOBAL</span> */}
           </BrandLogo>
           <BrandingContent>
             <Headline>Recover Your Account</Headline>

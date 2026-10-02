@@ -509,14 +509,16 @@ import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
 // 🎨 ENITZ GLOBAL BRAND THEME COLORS
-const PrimaryNavy = "#0B1B48";
-const PrimaryCyan = "#00AEEF";
+const PrimaryNavy ="rgba(115, 23, 28, 0.95) ";
+const PrimaryCyan = "rgba(85, 15, 18, 0.95)";
+const ThemeGradient = "linear-gradient(135deg, rgba(115, 23, 28, 0.95) 0%, rgba(85, 15, 18, 0.95) 100%)";
+
 const Dark = "#0f172a";
 const Border = "#cbd5e1";
 const White = "#ffffff";
 const TextMuted = "#475569";
 const LightBg = "#f8fafc";
-const ThemeGradient = "linear-gradient(135deg, #0B1B48 0%, #00AEEF 100%)";
+
 const SoftGradientBg = "linear-gradient(135deg, rgba(11, 27, 72, 0.05) 0%, rgba(0, 174, 239, 0.05) 100%)";
 
 // 🌟 Styled Components
@@ -844,29 +846,29 @@ const DashboardHome = () => {
         <>
           <SectionTitle>ADMIN Actions</SectionTitle>
           <MenuGrid>
-            <MenuCard clickable onClick={() => router.push("/dashboard/manage-categories")}>
+            {/* <MenuCard clickable onClick={() => router.push("/dashboard/manage-categories")}>
               <MenuContent>
                 <MenuTitle>Manage Product Categories</MenuTitle>
                 <MenuDesc>Create, View, Update and Delete product categories</MenuDesc>
               </MenuContent>
               <MenuIcon>🛍️</MenuIcon>
-            </MenuCard>
+            </MenuCard> */}
 
-            <MenuCard clickable onClick={() => router.push("/dashboard/manage-products")}>
+            {/* <MenuCard clickable onClick={() => router.push("/dashboard/manage-products")}>
               <MenuContent>
                 <MenuTitle>Manage Products</MenuTitle>
                 <MenuDesc>Create, View, Update and Delete products</MenuDesc>
               </MenuContent>
               <MenuIcon>🛍️</MenuIcon>
-            </MenuCard>
+            </MenuCard> */}
 
-            <MenuCard clickable onClick={() => router.push("/dashboard/manage-orders")}>
+            {/* <MenuCard clickable onClick={() => router.push("/dashboard/manage-orders")}>
               <MenuContent>
                 <MenuTitle>Manage Orders</MenuTitle>
                 <MenuDesc>View and manage customer orders</MenuDesc>
               </MenuContent>
               <MenuIcon>📦</MenuIcon>
-            </MenuCard>
+            </MenuCard> */}
 
             <MenuCard clickable onClick={() => router.push("/dashboard/manage-users")}>
               <MenuContent>
@@ -876,26 +878,34 @@ const DashboardHome = () => {
               <MenuIcon>👜</MenuIcon>
             </MenuCard>
 
-            <MenuCard clickable onClick={() => router.push("/dashboard/promocodes")}>
+            {/* <MenuCard clickable onClick={() => router.push("/dashboard/promocodes")}>
               <MenuContent>
                 <MenuTitle>Manage Promo Codes</MenuTitle>
                 <MenuDesc>View and manage promo codes</MenuDesc>
               </MenuContent>
               <MenuIcon>💥</MenuIcon>
-            </MenuCard>
+            </MenuCard> */}
 
-            <MenuCard clickable onClick={() => router.push("/dashboard/analytics")}>
+            {/* <MenuCard clickable onClick={() => router.push("/dashboard/analytics")}>
               <MenuContent>
                 <MenuTitle>Analytics</MenuTitle>
                 <MenuDesc>View store performance metrics</MenuDesc>
               </MenuContent>
               <MenuIcon>📈</MenuIcon>
-            </MenuCard>
+            </MenuCard> */}
 
-            <MenuCard clickable onClick={() => router.push("/dashboard/hostinglist")}>
+            {/* <MenuCard clickable onClick={() => router.push("/dashboard/hostinglist")}>
               <MenuContent>
                 <MenuTitle>Manage Hosting</MenuTitle>
                 <MenuDesc>View and manage hosting services</MenuDesc>
+              </MenuContent>
+              <MenuIcon>🌐</MenuIcon>
+            </MenuCard> */}
+
+               <MenuCard clickable onClick={() => router.push("/dashboard/manage-announcements")}>
+              <MenuContent>
+                <MenuTitle>Manage Announcements</MenuTitle>
+                <MenuDesc>Create, view, update and delete announcements</MenuDesc>
               </MenuContent>
               <MenuIcon>🌐</MenuIcon>
             </MenuCard>
@@ -904,8 +914,8 @@ const DashboardHome = () => {
       )}
 
       {/* Customer / Standard User Actions */}
-      <SectionTitle>Quick Actions</SectionTitle>
-      <MenuGrid>
+      {/* <SectionTitle>Quick Actions</SectionTitle> */}
+      {/* <MenuGrid>
         <MenuCard clickable onClick={() => router.push("/dashboard/myorders")}>
           <MenuContent>
             <MenuTitle>My Orders</MenuTitle>
@@ -921,7 +931,7 @@ const DashboardHome = () => {
           </MenuContent>
           <MenuIcon>📦</MenuIcon>
         </MenuCard>
-      </MenuGrid>
+      </MenuGrid> */}
 
       {/* Primary User Details */}
       <SectionTitle>Your Account Details</SectionTitle>

@@ -388,14 +388,17 @@ import Swal from "sweetalert2";
 import { usePathname } from "next/navigation";
 
 // 🎨 ENITZ GLOBAL BRAND THEME COLORS
-const PrimaryNavy = "#0B1B48";
-const PrimaryCyan = "#00AEEF";
+// 🎨 ENITZ GLOBAL BRAND THEME COLORS
+const PrimaryNavy ="rgba(115, 23, 28, 0.95) ";
+const PrimaryCyan = "rgba(85, 15, 18, 0.95)";
+const ThemeGradient = "linear-gradient(135deg, rgba(115, 23, 28, 0.95) 0%, rgba(85, 15, 18, 0.95) 100%)";
+
 const Dark = "#0f172a";
 const Border = "#cbd5e1";
 const White = "#ffffff";
 const TextMuted = "#475569";
 const LightBg = "#f8fafc";
-const ThemeGradient = "linear-gradient(135deg, #0B1B48 0%, #00AEEF 100%)";
+
 
 /* ---------------- LAYOUT WRAPPER ---------------- */
 const LayoutWrapper = styled.div`
@@ -404,6 +407,7 @@ const LayoutWrapper = styled.div`
   position: relative;
   background: ${LightBg};
   font-family: inherit;
+  padding-top:60px;
 `;
 
 /* ---------------- SIDEBAR ---------------- */
@@ -687,7 +691,8 @@ export default function DashboardLayout({ children }) {
       <Sidebar $open={sidebarOpen}>
         <SidebarTop>
           <BrandLogo>
-            ENITZ <span>GLOBAL</span>
+          ELIZABETH FOUNDATION SS
+    
           </BrandLogo>
 
           <NavLinks>
