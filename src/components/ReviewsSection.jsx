@@ -196,7 +196,7 @@ const ReviewsSection = () => {
                   <StarButton
                     key={star}
                     type="button"
-                    active={star <= formData.rating}
+                    $active={star <= formData.rating}
                     onClick={() => handleRatingClick(star)}
                   >
                     ★
