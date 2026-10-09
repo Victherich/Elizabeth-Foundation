@@ -1,3 +1,7 @@
+
+
+
+
 // "use client";
 
 // import { useEffect, useState } from "react";
@@ -13,8 +17,9 @@
 // } from "firebase/firestore";
 // import styled from "styled-components";
 // import Swal from "sweetalert2";
+
 // // 🎨 ENITZ GLOBAL BRAND THEME COLORS
-// const PrimaryNavy ="rgba(115, 23, 28, 0.95) ";
+// const PrimaryNavy = "rgba(115, 23, 28, 0.95)";
 // const PrimaryCyan = "rgba(85, 15, 18, 0.95)";
 // const ThemeGradient = "linear-gradient(135deg, rgba(115, 23, 28, 0.95) 0%, rgba(85, 15, 18, 0.95) 100%)";
 
@@ -329,6 +334,59 @@
 //   }
 // `;
 
+// // 🔹 Compression utility function
+// const compressImage = (file, maxSizeKB = 100) => {
+//   return new Promise((resolve, reject) => {
+//     if (!file) return reject(new Error("No file provided"));
+
+//     const reader = new FileReader();
+
+//     reader.onload = (e) => {
+//       const img = document.createElement("img");
+//       img.src = e.target.result;
+
+//       img.onload = () => {
+//         const canvas = document.createElement("canvas");
+//         const MAX_WIDTH = 800;
+//         const scaleSize = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1;
+
+//         canvas.width = img.width * scaleSize;
+//         canvas.height = img.height * scaleSize;
+
+//         const ctx = canvas.getContext("2d");
+//         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+//         let quality = 0.7;
+
+//         const compressLoop = () => {
+//           canvas.toBlob(
+//             (blob) => {
+//               if (!blob) return reject(new Error("Compression failed"));
+
+//               const sizeKB = blob.size / 1024;
+//               if (sizeKB <= maxSizeKB || quality <= 0.1) {
+//                 resolve(blob);
+//               } else {
+//                 quality -= 0.1;
+//                 compressLoop();
+//               }
+//             },
+//             "image/jpeg",
+//             quality
+//           );
+//         };
+
+//         compressLoop();
+//       };
+
+//       img.onerror = () => reject(new Error("Image load failed"));
+//     };
+
+//     reader.onerror = () => reject(new Error("File reading failed"));
+//     reader.readAsDataURL(file);
+//   });
+// };
+
 // export default function AnnouncementsCrudPage() {
 //   const [announcements, setAnnouncements] = useState([]);
 //   const [loading, setLoading] = useState(true);
@@ -340,6 +398,11 @@
 //   const [messageInput, setMessageInput] = useState("");
 //   const [linkInput, setLinkInput] = useState("");
 //   const [searchQuery, setSearchQuery] = useState("");
+
+//   // Image States for Announcement
+//   const [imageFile, setImageFile] = useState(null);
+//   const [imagePreview, setImagePreview] = useState("");
+//   const [existingImageUrl, setExistingImageUrl] = useState("");
 
 //   const fetchAnnouncements = async () => {
 //     try {
@@ -366,6 +429,9 @@
 //     setTitleInput("");
 //     setMessageInput("");
 //     setLinkInput("");
+//     setImageFile(null);
+//     setImagePreview("");
+//     setExistingImageUrl("");
 //     setIsModalOpen(true);
 //   };
 
@@ -374,6 +440,9 @@
 //     setTitleInput(item.title);
 //     setMessageInput(item.message || "");
 //     setLinkInput(item.link || "");
+//     setExistingImageUrl(item.image || "");
+//     setImagePreview(item.image || "");
+//     setImageFile(null);
 //     setIsModalOpen(true);
 //   };
 
@@ -382,38 +451,93 @@
 //     setTitleInput("");
 //     setMessageInput("");
 //     setLinkInput("");
+//     setImageFile(null);
+//     setImagePreview("");
+//     setExistingImageUrl("");
 //     setEditingId(null);
+//   };
+
+//   const handleFileChange = (e) => {
+//     const file = e.target.files[0];
+//     if (!file) return;
+
+//     setImageFile(file);
+//     setImagePreview(URL.createObjectURL(file));
+//     setExistingImageUrl("");
+//     e.target.value = "";
+//   };
+
+//   const handleRemoveImage = () => {
+//     setImageFile(null);
+//     setImagePreview("");
+//     setExistingImageUrl("");
 //   };
 
 //   const handleSaveAnnouncement = async (e) => {
 //     e.preventDefault();
 //     if (!titleInput.trim()) {
-//       Swal.fire("Validation", "Please enter an announcement title.", "warning");
-//       return;
+//       return Swal.fire("Validation", "Please enter an announcement title.", "warning");
 //     }
 
 //     try {
+//       Swal.fire({
+//         text: "Processing...",
+//         allowOutsideClick: false,
+//         didOpen: () => Swal.showLoading(),
+//       });
+
+//       let finalImageUrl = existingImageUrl;
+
+//       if (imageFile) {
+//         const compressedBlob = await compressImage(imageFile, 100);
+
+//         const data = new FormData();
+//         data.append("file", compressedBlob, "announcement.jpg");
+//         data.append("upload_preset", "bees_interior");
+//         data.append("folder", "announcements_elizabeth_foundation");
+
+//         const res = await fetch(
+//           "https://api.cloudinary.com/v1_1/aqxyleoh/image/upload",
+//           {
+//             method: "POST",
+//             body: data,
+//           }
+//         );
+
+//         const result = await res.json();
+
+//         if (!res.ok) {
+//           throw new Error(result.error?.message || "Image upload failed");
+//         }
+
+//         finalImageUrl = result.secure_url;
+//       }
+
+//       const payload = {
+//         title: titleInput,
+//         message: messageInput,
+//         link: linkInput,
+//         image: finalImageUrl,
+//       };
+
 //       if (editingId) {
 //         const docRef = doc(db, "announcements", editingId);
-//         await updateDoc(docRef, {
-//           title: titleInput,
-//           message: messageInput,
-//           link: linkInput,
-//         });
+//         await updateDoc(docRef, payload);
+//         Swal.close();
 //         Swal.fire("Updated!", "Announcement updated successfully.", "success");
 //       } else {
 //         await addDoc(collection(db, "announcements"), {
-//           title: titleInput,
-//           message: messageInput,
-//           link: linkInput,
+//           ...payload,
 //           createdAt: serverTimestamp(),
 //         });
+//         Swal.close();
 //         Swal.fire("Success!", "Announcement posted successfully.", "success");
 //       }
 //       closeModal();
 //       fetchAnnouncements();
 //     } catch (error) {
-//       Swal.fire("Error", "Could not save announcement.", "error");
+//       Swal.close();
+//       Swal.fire("Error", error.message || "Could not save announcement.", "error");
 //     }
 //   };
 
@@ -476,6 +600,11 @@
 //         <AnnouncementsGrid>
 //           {filteredAnnouncements.map((item) => (
 //             <AnnouncementCard key={item.id}>
+//               {item.image && (
+//                 <div style={{ width: "100%", height: "140px", overflow: "hidden", borderRadius: "8px 8px 0 0" }}>
+//                   <img src={item.image} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+//                 </div>
+//               )}
 //               <CardHeader>
 //                 <AnnouncementName>
 //                   {item.title ? item.title.charAt(0).toUpperCase() + item.title.slice(1) : ""}
@@ -525,6 +654,34 @@
 //                 value={linkInput} 
 //                 onChange={(e) => setLinkInput(e.target.value)} 
 //               />
+
+//               {/* 🌟 Announcement Image Upload & Preview Field */}
+//               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+//                 <label style={{ fontSize: "0.85rem", fontWeight: "700", color: "#333" }}>
+//                   Announcement Image
+//                 </label>
+//                 <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+//                   <input 
+//                     type="file" 
+//                     accept="image/*" 
+//                     onChange={handleFileChange} 
+//                     style={{ fontSize: "0.85rem" }}
+//                   />
+//                   {imagePreview && (
+//                     <div style={{ position: "relative", width: "50px", height: "50px", borderRadius: "6px", overflow: "hidden", border: "1px solid #ccc" }}>
+//                       <img src={imagePreview} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+//                       <button 
+//                         type="button" 
+//                         onClick={handleRemoveImage}
+//                         style={{ position: "absolute", top: 0, right: 0, background: "red", color: "white", border: "none", fontSize: "10px", cursor: "pointer", padding: "2px 4px" }}
+//                       >
+//                         ✕
+//                       </button>
+//                     </div>
+//                   )}
+//                 </div>
+//               </div>
+
 //               <ModalActions>
 //                 <CancelButton type="button" onClick={closeModal}>Cancel</CancelButton>
 //                 <SaveButton type="submit">{editingId ? "Save Changes" : "Post Announcement"}</SaveButton>
@@ -536,9 +693,6 @@
 //     </Container>
 //   );
 // }
-
-
-
 
 
 
@@ -874,59 +1028,6 @@ const SaveButton = styled.button`
   }
 `;
 
-// 🔹 Compression utility function
-const compressImage = (file, maxSizeKB = 100) => {
-  return new Promise((resolve, reject) => {
-    if (!file) return reject(new Error("No file provided"));
-
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const img = document.createElement("img");
-      img.src = e.target.result;
-
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const MAX_WIDTH = 800;
-        const scaleSize = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1;
-
-        canvas.width = img.width * scaleSize;
-        canvas.height = img.height * scaleSize;
-
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        let quality = 0.7;
-
-        const compressLoop = () => {
-          canvas.toBlob(
-            (blob) => {
-              if (!blob) return reject(new Error("Compression failed"));
-
-              const sizeKB = blob.size / 1024;
-              if (sizeKB <= maxSizeKB || quality <= 0.1) {
-                resolve(blob);
-              } else {
-                quality -= 0.1;
-                compressLoop();
-              }
-            },
-            "image/jpeg",
-            quality
-          );
-        };
-
-        compressLoop();
-      };
-
-      img.onerror = () => reject(new Error("Image load failed"));
-    };
-
-    reader.onerror = () => reject(new Error("File reading failed"));
-    reader.readAsDataURL(file);
-  });
-};
-
 export default function AnnouncementsCrudPage() {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1001,6 +1102,18 @@ export default function AnnouncementsCrudPage() {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Check if file size exceeds 2MB (2 * 1024 * 1024 bytes)
+    const MAX_SIZE_BYTES = 2 * 1024 * 1024;
+    if (file.size > MAX_SIZE_BYTES) {
+      Swal.fire({
+        icon: "warning",
+        title: "File Too Large",
+        text: "The maximum allowed file size is 2MB. Please select a smaller image.",
+      });
+      e.target.value = ""; // Reset file input
+      return;
+    }
+
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
     setExistingImageUrl("");
@@ -1016,7 +1129,7 @@ export default function AnnouncementsCrudPage() {
   const handleSaveAnnouncement = async (e) => {
     e.preventDefault();
     if (!titleInput.trim()) {
-      return Swal.fire("Validation", "Please enter an announcement title.", "warning");
+      return Swal.fire("Validation", "Please enter a title.", "warning");
     }
 
     try {
@@ -1029,10 +1142,8 @@ export default function AnnouncementsCrudPage() {
       let finalImageUrl = existingImageUrl;
 
       if (imageFile) {
-        const compressedBlob = await compressImage(imageFile, 100);
-
         const data = new FormData();
-        data.append("file", compressedBlob, "announcement.jpg");
+        data.append("file", imageFile);
         data.append("upload_preset", "bees_interior");
         data.append("folder", "announcements_elizabeth_foundation");
 
@@ -1064,20 +1175,20 @@ export default function AnnouncementsCrudPage() {
         const docRef = doc(db, "announcements", editingId);
         await updateDoc(docRef, payload);
         Swal.close();
-        Swal.fire("Updated!", "Announcement updated successfully.", "success");
+        Swal.fire("Updated!", "Updated successfully.", "success");
       } else {
         await addDoc(collection(db, "announcements"), {
           ...payload,
           createdAt: serverTimestamp(),
         });
         Swal.close();
-        Swal.fire("Success!", "Announcement posted successfully.", "success");
+        Swal.fire("Success!", "Announcement added successfully.", "success");
       }
       closeModal();
       fetchAnnouncements();
     } catch (error) {
       Swal.close();
-      Swal.fire("Error", error.message || "Could not save announcement.", "error");
+      Swal.fire("Error", error.message || "Could not save.", "error");
     }
   };
 
@@ -1188,17 +1299,11 @@ export default function AnnouncementsCrudPage() {
                 value={messageInput} 
                 onChange={(e) => setMessageInput(e.target.value)} 
               />
-              <StyledInput 
-                type="text" 
-                placeholder="Optional Target URL / Link (e.g. /shop)" 
-                value={linkInput} 
-                onChange={(e) => setLinkInput(e.target.value)} 
-              />
 
               {/* 🌟 Announcement Image Upload & Preview Field */}
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={{ fontSize: "0.85rem", fontWeight: "700", color: "#333" }}>
-                  Announcement Image
+                  Announcement Image (Max 2MB)
                 </label>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
                   <input 
