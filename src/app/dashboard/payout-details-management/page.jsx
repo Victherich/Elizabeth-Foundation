@@ -126,7 +126,7 @@ export default function PaystackSubaccountSetupPage() {
     businessName: "",
     settlementBank: "",
     accountNumber: "",
-    percentageCharge: 10
+    percentageCharge: 1.5
   });
 
   const [subaccountInfo, setSubaccountInfo] = useState(null);
