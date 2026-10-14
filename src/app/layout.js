@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ContextProvider } from "@/components/Context";
 import { CartProvider } from "@/components/CartContext";
+import StyledComponentsRegistry from "./registry";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        
+        <StyledComponentsRegistry>
           <CartProvider>
              <ContextProvider>
           <Header />
@@ -42,7 +43,7 @@ export default function RootLayout({ children }) {
           <Footer />
           </ContextProvider>
           </CartProvider>
-        
+        </StyledComponentsRegistry>
       </body>
     </html>
   );

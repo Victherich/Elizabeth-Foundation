@@ -343,12 +343,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
+import PaymentInProgressModal from './PaymentInProgressModal';
+import { useAppContext } from './Context';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
+   const { paymentSession } = useAppContext();
 
   const menuItems = [
     { name: 'Home', href: '/' },
@@ -429,6 +432,7 @@ const Header = () => {
 
   return (
     <NavContainer ref={menuRef}>
+       {paymentSession && <PaymentInProgressModal />}
       <NavContent>
         {/* Logo Section */}
         <LogoLink 

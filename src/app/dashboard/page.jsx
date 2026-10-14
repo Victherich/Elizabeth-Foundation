@@ -909,6 +909,21 @@ const DashboardHome = () => {
               </MenuContent>
               <MenuIcon>🌐</MenuIcon>
             </MenuCard>
+               <MenuCard clickable onClick={() => router.push("/dashboard/manage-tickets")}>
+              <MenuContent>
+                <MenuTitle>Manage Event Tickets</MenuTitle>
+                <MenuDesc>Create, view, update and delete event tickets</MenuDesc>
+              </MenuContent>
+              <MenuIcon>🌐</MenuIcon>
+            </MenuCard>
+              <MenuCard clickable onClick={() => router.push("/dashboard/payout-details-management")}>
+              <MenuContent>
+                <MenuTitle>Manage Payout Account Details
+                </MenuTitle>
+                <MenuDesc>Create, View or Delete Payout Account Details</MenuDesc>
+              </MenuContent>
+              <MenuIcon>🌐</MenuIcon>
+            </MenuCard>
           </MenuGrid>
         </>
       )}

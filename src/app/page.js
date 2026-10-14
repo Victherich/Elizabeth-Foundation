@@ -24,6 +24,7 @@ import FoundationFormsSection from '@/components/FoundationFormsSection';
 import ContactUsSection from '@/components/ContactUsSection';
 import ReviewsSection from '@/components/ReviewsSection';
 import AnnouncementsSection from '@/components/AnnouncementsSection';
+import PurchaseEventTickets from '@/components/PurchaseEventTickets';
 
 
 
@@ -39,6 +40,7 @@ export default function CompleteLandingPage() {
     <HeroSection2/>
     <AboutSection/>
     <AnnouncementsSection/>
+    <PurchaseEventTickets/>
 <BlueBirdMemorial/>
 <StorySection/>
 <ImpactSection/>
