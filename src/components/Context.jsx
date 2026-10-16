@@ -431,7 +431,7 @@ export function ContextProvider({ children }) {
       const docRef = await addDoc(collection(db, "orders"), orderPayload);
 
       const buyerEmail = orderPayload.accountInfo?.email || '';
-      const sellerEmail = 'esomesther@gmail.com'; // Replace or configure with seller email
+      const sellerEmail = 'elizabethfoundationss21@gmail.com'; // Replace or configure with seller email
 
       // 3. ISOLATED EMAIL BLOCK
       try {
