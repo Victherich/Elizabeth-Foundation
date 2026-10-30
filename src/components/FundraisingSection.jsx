@@ -41,7 +41,7 @@ const FundraisingSection = () => {
           <BankCardTitle>💳 Donation Bank Details</BankCardTitle>
           <BankRow>
             <BankLabel>Account Name</BankLabel>
-            <BankValue>Pinkles Nigeria Limited</BankValue>
+            <BankValue>EFSS CLINICAL HUB AND WORKSHOP</BankValue>
           </BankRow>
           <BankDivider />
           <BankRow>
@@ -51,7 +51,7 @@ const FundraisingSection = () => {
           <BankDivider />
           <BankRow>
             <BankLabel>Account Number</BankLabel>
-            <BankAccountNumber>4092477448</BankAccountNumber>
+            <BankAccountNumber>4092516291</BankAccountNumber>
           </BankRow>
           <BankFooterNote>
             Please send your name and donation type via WhatsApp after transfer: +234 812 902 1862

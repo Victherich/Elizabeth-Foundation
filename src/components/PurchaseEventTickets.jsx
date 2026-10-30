@@ -505,7 +505,7 @@ const handleOpenPurchaseModal = (ticket) => {
                   </TiersContainer>
 
                   <BuyButton onClick={() => handleOpenPurchaseModal(item)}>
-                    Get Ticket Pass 🎟️
+                    Reserve your table 🎟️
                   </BuyButton>
                 </TicketStubBody>
               </TicketPass>
