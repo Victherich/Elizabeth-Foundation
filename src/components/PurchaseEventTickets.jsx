@@ -429,6 +429,7 @@ const handleOpenPurchaseModal = (ticket) => {
       ticketId: selectedTicket.id,
       eventName: selectedTicket.name,
       eventDate: selectedTicket.eventDate,
+      eventTime: selectedTicket.eventTime || "",
       venue: selectedTicket.venue,
       ticketReference: selectedTicket.ticketReference,
       assignedTicketCode: ticketUniqueCode,
@@ -487,8 +488,8 @@ const handleOpenPurchaseModal = (ticket) => {
                 <TicketMainBody>
                   <TicketName>{item.name}</TicketName>
                   <TicketDesc>{item.description || "No description provided."}</TicketDesc>
-                  <TicketMetaRow>
-                    <span>📅 Date: {item.eventDate || "TBA"}</span>
+                <TicketMetaRow>
+                    <span>📅 Date: {item.eventDate || "TBA"} {item.eventTime ? `at ${item.eventTime}` : ""}</span>
                     <span>📍 Venue: {item.venue || "Venue TBA"}</span>
                   </TicketMetaRow>
                 </TicketMainBody>

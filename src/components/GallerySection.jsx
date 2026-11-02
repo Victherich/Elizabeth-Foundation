@@ -8,7 +8,7 @@ const GallerySection = () => {
   // Array of your gallery images (Update paths/filenames as needed)
   const galleryImages = [
     { src: '/g1.jpg', alt: 'Elizabeth Foundation - Memory 1' },
-    { src: '/g2.jpg', alt: 'Elizabeth Foundation - Memory 2' },
+    // { src: '/g2.jpg', alt: 'Elizabeth Foundation - Memory 2' },
     { src: '/g3.jpg', alt: 'Elizabeth Foundation - Memory 3' },
     { src: '/g4.jpg', alt: 'Elizabeth Foundation - Memory 4' },
     { src: '/g5.jpg', alt: 'Elizabeth Foundation - Memory 5' },
@@ -25,10 +25,10 @@ const GallerySection = () => {
     // { src: '/g16.jpg', alt: 'Elizabeth Foundation - Memory 16' },
     // { src: '/g17.jpg', alt: 'Elizabeth Foundation - Memory 17' },
     { src: '/g18.jpg', alt: 'Elizabeth Foundation - Memory 18' },
-    { src: '/g19.jpg', alt: 'Elizabeth Foundation - Memory 19' },
+    // { src: '/g19.jpg', alt: 'Elizabeth Foundation - Memory 19' },
     // { src: '/g20.jpg', alt: 'Elizabeth Foundation - Memory 20' },
     // { src: '/g21.jpg', alt: 'Elizabeth Foundation - Memory 21' },
-    { src: '/g22.jpg', alt: 'Elizabeth Foundation - Memory 22' },
+    // { src: '/g22.jpg', alt: 'Elizabeth Foundation - Memory 22' },
     // { src: '/g23.jpg', alt: 'Elizabeth Foundation - Memory 23' },
     // { src: '/g24.jpg', alt: 'Elizabeth Foundation - Memory 24' },
     // { src: '/g25.jpg', alt: 'Elizabeth Foundation - Memory 25' },
@@ -52,7 +52,7 @@ const GallerySection = () => {
     {src: '/g43.jpg', alt: 'Elizabeth Foundation - Memory 43' },
     // {src: '/g44.jpg', alt: 'Elizabeth Foundation - Memory 44' },
     // {src: '/g45.jpg', alt: 'Elizabeth Foundation - Memory 45' },
-  {src: '/g46.jpg', alt: 'Elizabeth Foundation - Memory 46' },
+  // {src: '/g46.jpg', alt: 'Elizabeth Foundation - Memory 46' },
   ];
 
   const [activeImage, setActiveImage] = useState(null);

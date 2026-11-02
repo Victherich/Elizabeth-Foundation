@@ -916,6 +916,31 @@ const DashboardHome = () => {
               </MenuContent>
               <MenuIcon>🌐</MenuIcon>
             </MenuCard>
+
+             <MenuCard clickable onClick={() => router.push("/dashboard/manage-donations")}>
+              <MenuContent>
+                <MenuTitle>Manage Donations</MenuTitle>
+                <MenuDesc>Create, view, update and delete Donations</MenuDesc>
+              </MenuContent>
+              <MenuIcon>🌐</MenuIcon>
+            </MenuCard>
+
+             <MenuCard clickable onClick={() => router.push("/dashboard/manage-charity-shop-products")}>
+              <MenuContent>
+                <MenuTitle>Manage Charity shop Products</MenuTitle>
+                <MenuDesc>Create, view, update and delete Charity shop products</MenuDesc>
+              </MenuContent>
+              <MenuIcon>🌐</MenuIcon>
+            </MenuCard>
+
+              <MenuCard clickable onClick={() => router.push("/dashboard/manage-impact-media")}>
+              <MenuContent>
+                <MenuTitle>Manage Impact Media</MenuTitle>
+                <MenuDesc>Create, view, update and delete impact media content</MenuDesc>
+              </MenuContent>
+              <MenuIcon>🌐</MenuIcon>
+            </MenuCard>
+
               <MenuCard clickable onClick={() => router.push("/dashboard/payout-details-management")}>
               <MenuContent>
                 <MenuTitle>Manage Payout Account Details

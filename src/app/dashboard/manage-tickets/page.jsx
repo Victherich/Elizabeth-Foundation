@@ -513,6 +513,7 @@ export default function ManageTicketsPage() {
     name: "",
     description: "",
     eventDate: "",
+    eventTime: "", // ⬅️ Add this line
     venue: "",
     ticketReference: "",
     isActive: true,
@@ -608,6 +609,7 @@ export default function ManageTicketsPage() {
         name: form.name,
         description: form.description,
         eventDate: form.eventDate,
+        eventTime: form.eventTime,
         venue: form.venue,
         ticketReference: form.ticketReference || generateRandomReference(),
         isActive: form.isActive,
@@ -632,7 +634,7 @@ export default function ManageTicketsPage() {
       });
 
       setShowModal(false);
-      setForm({ name: "", description: "", eventDate: "", venue: "", ticketReference: "", isActive: true, pricingTiers: [{ level: "STANDARD", amount: "" }] });
+      setForm({ name: "", description: "", eventDate: "",eventTime: "", venue: "", ticketReference: "", isActive: true, pricingTiers: [{ level: "STANDARD", amount: "" }] });
       setEditingId(null);
       fetchTickets();
     } catch (error) {
@@ -651,6 +653,7 @@ export default function ManageTicketsPage() {
       name: item.name || "",
       description: item.description || "",
       eventDate: item.eventDate || "",
+      eventTime: item.eventTime || "",
       venue: item.venue || "",
       ticketReference: item.ticketReference || generateRandomReference(),
       isActive: item.isActive ?? true,
@@ -773,7 +776,7 @@ export default function ManageTicketsPage() {
                   </div>
                   <TicketDesc>{item.description || "No description provided."}</TicketDesc>
                   <TicketMetaRow>
-                    <span>📅 {item.eventDate || "TBA"}</span>
+                    <span>📅 {item.eventDate || "TBA"} {item.eventTime ? `at ${item.eventTime}` : ""}</span>
                     <span>📍 {item.venue || "Venue TBA"}</span>
                   </TicketMetaRow>
                 </TicketMainBody>
@@ -855,6 +858,12 @@ export default function ManageTicketsPage() {
                   type="date"
                   value={form.eventDate}
                   onChange={(e) => setForm({ ...form, eventDate: e.target.value })}
+                  required
+                />
+                <StyledInput
+                  type="time" // ⬅️ Add this input field
+                  value={form.eventTime}
+                  onChange={(e) => setForm({ ...form, eventTime: e.target.value })}
                   required
                 />
                 <StyledInput

@@ -25,6 +25,7 @@ import ContactUsSection from '@/components/ContactUsSection';
 import ReviewsSection from '@/components/ReviewsSection';
 import AnnouncementsSection from '@/components/AnnouncementsSection';
 import PurchaseEventTickets from '@/components/PurchaseEventTickets';
+import DonateCampaigns from '@/components/DonateCampaigns';
 
 
 
@@ -41,6 +42,7 @@ export default function CompleteLandingPage() {
     <AboutSection/>
     <AnnouncementsSection/>
     <PurchaseEventTickets/>
+    <DonateCampaigns/>
 <BlueBirdMemorial/>
 <StorySection/>
 <ImpactSection/>

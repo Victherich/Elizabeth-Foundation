@@ -4,6 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { Home, Smile, UserCheck, Backpack, Users, Gift, Droplet, Shirt } from 'lucide-react';
+import PublicImpactsSection from './ImpactMedia';
 
 const ImpactSection = () => {
   const impactPrograms = [
@@ -50,6 +51,7 @@ const ImpactSection = () => {
   ];
 
   return (
+    <>
     <ImpactContainer id="impact">
       <ImpactContentWrapper>
         {/* Section Header */}
@@ -93,7 +95,10 @@ const ImpactSection = () => {
         </PhotoBannerCard>
 
       </ImpactContentWrapper>
+      
     </ImpactContainer>
+    <PublicImpactsSection/>
+  </>
   );
 };
 

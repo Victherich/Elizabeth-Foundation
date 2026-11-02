@@ -364,6 +364,7 @@ const Header = () => {
     { name: 'Reviews', href: '#reviews' },
     { name: 'Forms', href: '#forms' },
     { name: 'Contact', href: '#contact' },
+    {name:'EFSS Charity Shop', href:"/charity-shop"},
     { name: 'School Fees', href: '/school-fees-support' },
     
     { name: "Elizabeth's Story", href: '/elizabeth-story' },
