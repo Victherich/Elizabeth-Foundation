@@ -198,8 +198,9 @@ export async function POST(request) {
     `;
 
     const mailOptions = {
-      from: `"${senderName} via Pinkles" <${process.env.SMTP_USER}>`,
-      to: 'elizabethfoundationss21@gmail.com',
+      from: `"${senderName} via EFSS" <${process.env.SMTP_USER}>`,
+      // to: 'elizabethfoundationss21@gmail.com',
+            to: 'victherich@gmail.com',
       replyTo: senderEmail,
       subject: `New Inquiry: ${formTitle} from ${senderName}`,
       html: htmlContent,

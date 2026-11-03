@@ -2,8 +2,10 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import { useRouter } from 'next/navigation';
 
 const FoundationFormsSection = () => {
+  const router = useRouter();
   return (
     <SectionContainer id="forms">
       <SectionContentWrapper>
@@ -43,7 +45,13 @@ const FoundationFormsSection = () => {
             </SectionsList>
 
             <CardButtonsRow>
-              <OpenButton 
+                    <OpenButton 
+        onClick={()=>router.push('/welfare-form')}
+      style={{cursor: 'pointer'}}
+              >
+               Open Form
+              </OpenButton>
+              {/* <OpenButton 
                 variant="burgundy" 
                 href="/3ee79bb32_Elizabeth_Foundation_Forms_CORRECTED_Combined.pdf" 
                 target="_blank" 
@@ -56,7 +64,7 @@ const FoundationFormsSection = () => {
                 download="Welfare_Application_Form.pdf"
               >
                 <span>📥</span> Download
-              </DownloadButton>
+              </DownloadButton> */}
             </CardButtonsRow>
           </FormCard>
 
@@ -84,20 +92,26 @@ const FoundationFormsSection = () => {
             </SectionsList>
 
             <CardButtonsRow>
-              <OpenButton 
+                <OpenButton 
+        onClick={()=>router.push('/welfare-form')}
+                  style={{cursor: 'pointer'}}
+              >
+               Open Form
+              </OpenButton>
+              {/* <OpenButton 
                 variant="gold" 
                 href="/3ee79bb32_Elizabeth_Foundation_Forms_CORRECTED_Combined2.pdf" 
                 target="_blank" 
                 rel="noopener noreferrer"
               >
                 <span>↗</span> Open Form
-              </OpenButton>
-              <DownloadButton 
+              </OpenButton> */}
+              {/* <DownloadButton 
                 href="/3ee79bb32_Elizabeth_Foundation_Forms_CORRECTED_Combined2.pdf" 
                 download="Membership_Registration_Form.pdf"
               >
                 <span>📥</span> Download
-              </DownloadButton>
+              </DownloadButton> */}
             </CardButtonsRow>
           </FormCard>
         </FormsGrid>
