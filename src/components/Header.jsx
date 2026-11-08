@@ -345,6 +345,10 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import PaymentInProgressModal from './PaymentInProgressModal';
 import { useAppContext } from './Context';
+import { useDonationContext } from './DonationContext';
+import { useCharityShopContext } from './CharityShopContext';
+import DonationPaymentInProgressModal from './DonationPaymentInProgressModal';
+import CharityShopPaymentInProgressModal from './CharityShopPaymentInProgressModal';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -352,6 +356,8 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
    const { paymentSession } = useAppContext();
+   const { donationPaymentSession } = useDonationContext();
+   const {charityShopPaymentSession} = useCharityShopContext();
 
   const menuItems = [
     { name: 'Home', href: '/' },
@@ -434,6 +440,8 @@ const Header = () => {
   return (
     <NavContainer ref={menuRef}>
        {paymentSession && <PaymentInProgressModal />}
+       {donationPaymentSession && <DonationPaymentInProgressModal />}
+       {charityShopPaymentSession && <CharityShopPaymentInProgressModal />}
       <NavContent>
         {/* Logo Section */}
         <LogoLink 

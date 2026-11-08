@@ -18,6 +18,7 @@ import Swal from "sweetalert2";
 import { useAppContext } from "@/components/Context";
 import VolunteerForm from "@/components/VolunteerForm";
 import PublicCharityIntroPreview from "@/components/CharityShopIntro";
+import { useCharityShopContext } from "@/components/CharityShopContext";
 
 // 🎨 THEME COLORS
 const PrimaryNavy = "rgba(115, 23, 28, 0.95)";
@@ -545,7 +546,7 @@ export default function CharityShopStore() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [subaccountCode, setSubaccountCode] = useState(null);
-  const { payWithPaystack } = useAppContext();
+  const { payWithPaystack } = useCharityShopContext();
 
   // 🛒 Cart States
   const [cart, setCart] = useState([]);

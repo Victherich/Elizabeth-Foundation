@@ -933,6 +933,14 @@ const DashboardHome = () => {
               <MenuIcon>🌐</MenuIcon>
             </MenuCard>
 
+             <MenuCard clickable onClick={() => router.push("/dashboard/manage-charity-shop-orders")}>
+              <MenuContent>
+                <MenuTitle>Charity shop Orders</MenuTitle>
+                <MenuDesc> view Charity shop order</MenuDesc>
+              </MenuContent>
+              <MenuIcon>🌐</MenuIcon>
+            </MenuCard>
+
               <MenuCard clickable onClick={() => router.push("/dashboard/manage-impact-media")}>
               <MenuContent>
                 <MenuTitle>Manage Impact Media</MenuTitle>
