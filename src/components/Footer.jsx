@@ -14,7 +14,7 @@ const Footer = () => {
 
         {/* Contact Info Text */}
         <InfoText>
-          CAC/NGO Reg No: 8391820 &bull; Elizabeth Foundation SS Clinic Hub, Oluyole, Ibadan, Oyo State
+          CAC/NGO Reg No: 9891785 &bull; Elizabeth Foundation SS Clinic Hub, Oluyole, Ibadan, Oyo State
         </InfoText>
         <ContactRow>
           <a href="tel:+2348129021662">+234 812 902 1662</a>
